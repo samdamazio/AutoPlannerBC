@@ -15,7 +15,7 @@ def process_file(file_path, label_text):
         
         # Transformar os dados
         df['Telefone'] = df['Telefone'].apply(lambda x: f"55{x}")
-        df['Etiquetas'] = label_text
+        df['Etiquetas'] = f"{label_text}, sem nome"
         
         # Reorganizar as colunas
         new_df = df[['Telefone', 'Nome', 'Etiquetas']]
@@ -25,7 +25,7 @@ def process_file(file_path, label_text):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         
-        file_name = os.path.basename(file_path).replace(".xlsx", "_new.xlsx").replace(".csv", "_new.xlsx")
+        file_name = os.path.basename(file_path).replace(".xlsx", "_BC.xlsx").replace(".csv", "_BC.xlsx")
         new_file_path = os.path.join(output_folder, file_name)
         
         new_df.to_excel(new_file_path, index=False)
@@ -43,10 +43,14 @@ def select_file():
 
 def validate_and_process(file_path):
     label_text = label_entry.get()
-    if not label_text:
-        messagebox.showerror("Erro", "Por favor, insira uma etiqueta.")
+    if not label_text or label_text == "Nome":
+        messagebox.showerror("Erro", "Por favor, insira um nome válido.")
         return
     process_file(file_path, label_text)
+
+def clear_placeholder(event):
+    if label_entry.get() == "Nome":
+        label_entry.delete(0, tk.END)
 
 # Configuração da janela principal
 root = tk.Tk()
@@ -60,7 +64,8 @@ select_button = tk.Button(root, text="Procurar Arquivo", command=select_file)
 select_button.pack()
 
 label_entry = tk.Entry(root)
-label_entry.insert(0, "Etiqueta, sem nome")
+label_entry.insert(0, "Nome")
+label_entry.bind("<FocusIn>", clear_placeholder)
 label_entry.pack()
 
 execute_button = tk.Button(root, text="Executar", state=tk.DISABLED)
