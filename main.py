@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pandas as pd
+import os
 
 def process_file(file_path, label_text):
     try:
@@ -19,8 +20,14 @@ def process_file(file_path, label_text):
         # Reorganizar as colunas
         new_df = df[['Telefone', 'Nome', 'Etiquetas']]
         
-        # Salvar a nova planilha
-        new_file_path = file_path.replace(".xlsx", "_new.xlsx").replace(".csv", "_new.xlsx")
+        # Definir o caminho para salvar a nova planilha
+        output_folder = os.path.join(os.getcwd(), "PlanilhasProntas")
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        
+        file_name = os.path.basename(file_path).replace(".xlsx", "_new.xlsx").replace(".csv", "_new.xlsx")
+        new_file_path = os.path.join(output_folder, file_name)
+        
         new_df.to_excel(new_file_path, index=False)
         
         messagebox.showinfo("Sucesso", f"Nova planilha criada: {new_file_path}")
