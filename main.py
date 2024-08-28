@@ -38,6 +38,7 @@ def select_file():
         file_label.config(text=file_name)  # Atualizar o label para mostrar o nome do arquivo
         execute_button.config(state=tk.NORMAL)
         execute_button.config(command=lambda: validate_and_process(file_path, label_entry.get()))
+        update_background()  # Forçar atualização da imagem de fundo
 
 def validate_and_process(file_path, label_text):
     if not label_text or label_text == "Nome":
@@ -50,18 +51,20 @@ def clear_placeholder(event):
         label_entry.delete(0, tk.END)
 
 def resize_background(event):
-    new_width = event.width
-    new_height = event.height
-    # Calcular a nova proporção, mantendo a imagem centralizada e cobrindo toda a janela
+    update_background()
+
+def update_background():
+    new_width = root.winfo_width()
+    new_height = root.winfo_height()
     ratio_width = new_width / original_width
     ratio_height = new_height / original_height
-    ratio = max(ratio_width, ratio_height)  # Usar o maior para cobrir completamente a janela
+    ratio = max(ratio_width, ratio_height)
     new_size = (int(original_width * ratio), int(original_height * ratio))
     resized_image = original_background_image.resize(new_size, Image.LANCZOS)
     new_background_photo = ImageTk.PhotoImage(resized_image)
     background_label.config(image=new_background_photo)
     background_label.image = new_background_photo
-    background_label.place(relwidth=1, relheight=1)  # Preencher completamente a janela
+    background_label.place(relwidth=1, relheight=1)
 
 # Configuração da janela principal
 root = tk.Tk()
